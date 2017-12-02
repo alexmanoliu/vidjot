@@ -5,7 +5,7 @@ const passport = require('passport');
 const router = express.Router();
 
 // Load User Model
-require('../models/users');
+require('../models/User');
 const User = mongoose.model('users');
 
 // User Login Route
@@ -80,7 +80,7 @@ router.post('/register', (req, res) => {
   }
 });
 
-//logout user
+// Logout User
 router.get('/logout', (req, res) => {
   req.logout();
   req.flash('success_msg', 'You are logged out');

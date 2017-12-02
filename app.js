@@ -1,61 +1,63 @@
-const express = require("express");
+const express = require('express');
 const path = require('path');
-const exphbs = require('express-handlebars');
+const exphbs  = require('express-handlebars');
 const methodOverride = require('method-override');
 const flash = require('connect-flash');
 const session = require('express-session');
-const bodyParser = require("body-parser");
+const bodyParser = require('body-parser');
 const passport = require('passport');
 const mongoose = require('mongoose');
 
 const app = express();
 
-//load routes
+// Load routes
 const ideas = require('./routes/ideas');
 const users = require('./routes/users');
 
-//Passport Config
+// Passport Config
 require('./config/passport')(passport);
-
-//DB Config
+// DB Config
 const db = require('./config/database');
 
-//map global - get rid of warning
+// Map global promise - get rid of warning
 mongoose.Promise = global.Promise;
+// Connect to mongoose
+mongoose.connect(db.mongoURI, {
+  useMongoClient: true
+})
+  .then(() => console.log('MongoDB Connected...'))
+  .catch(err => console.log(err));
 
-//connect to mongoose
-mongoose.connect(db.mongoURI, {useMongoClient: true})
-.then(() => console.log('MongoDB Connected...'))
-.catch(err => console.log(err));
-
-//handlebars middleware
-app.engine('handlebars', exphbs({defaultLayout: 'main'}));
+// Handlebars Middleware
+app.engine('handlebars', exphbs({
+  defaultLayout: 'main'
+}));
 app.set('view engine', 'handlebars');
 
-//body parser middleware
-app.use(bodyParser.urlencoded({ extended: false}))
+// Body parser middleware
+app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
-//static folder
+// Static folder
 app.use(express.static(path.join(__dirname, 'public')));
 
-//method override middleware
+// Method override middleware
 app.use(methodOverride('_method'));
 
-//express session middleware
+// Express session midleware
 app.use(session({
-   secret: 'secret',
-   resave: true,
-   saveUninitialized:true
+  secret: 'secret',
+  resave: true,
+  saveUninitialized: true
 }));
 
-//passport middleware
+// Passport middleware
 app.use(passport.initialize());
 app.use(passport.session());
 
 app.use(flash());
 
-//global variables
+// Global variables
 app.use(function(req, res, next){
   res.locals.success_msg = req.flash('success_msg');
   res.locals.error_msg = req.flash('error_msg');
@@ -64,20 +66,21 @@ app.use(function(req, res, next){
   next();
 });
 
-//index route
+// Index Route
 app.get('/', (req, res) => {
-    const title = 'Welcome';
-    res.render('index', {
-      title: title
-    });
+  const title = 'Welcome';
+  res.render('index', {
+    title: title
+  });
 });
 
-//about route
+// About Route
 app.get('/about', (req, res) => {
   res.render('about');
 });
 
-//use routes
+
+// Use routes
 app.use('/ideas', ideas);
 app.use('/users', users);
 
