@@ -2,12 +2,12 @@
   "name": "vidjot",
   "version": "1.0.0",
   "description": "App to create video ideas",
-  "main": "server.js",
+  "main": "app.js",
   "scripts": {
     "start": "node app.js"
   },
-  "author": "Brad Traversy",
-  "license": "MIT",
+  "author": "alexm",
+  "license": "alexm",
   "dependencies": {
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.18.1",
